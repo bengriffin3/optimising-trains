@@ -1,0 +1,17 @@
+% maxplus matrix multiplication
+function C = maxmult(A,B)
+[m,r]=size(A); 
+[s,n]=size(B);
+% could perform maxplus matrix multiplication if innrt dimension agrees
+if r==s 
+    C=-inf*ones(m,n);
+for i=1:m 
+    for j=1:n 
+        for k=1:r
+            C(i,j)=max(C(i,j),(A(i,k)+B(k,j)));
+        end
+    end
+end
+else
+    disp('Inner matrix dimensions must agree.')
+end

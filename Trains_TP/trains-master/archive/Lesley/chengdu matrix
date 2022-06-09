@@ -1,0 +1,23 @@
+% 24 stations in total if we consider the end stations
+% s,t,weights directed represent real network
+s=[1 2 2 3 2 4 2 5 3 6 3 7 4 8 4 9 5 8 5 10 7 11 7 12 7 13 8 9 8 14 9 11 9 15 11 12 11 15 12 16 12 17 14 15 5 18 14 18 14 19 15 17 16 20 16 21 17 19 17 22 18 23 18 19 19 24];
+t=[2 1 3 2 4 2 5 2 6 3 7 3 8 4 9 4 8 5 10 5 11 7 12 7 13 7 9 8 14 8 11 9 15 9 12 11 15 11 16 12 17 12 15 14 18 5 18 14 19 14 17 15 20 16 21 16 19 17 22 17 23 18 19 18 24 19];
+weights=[18 18 4 4 7 7 10 10 28 28 9 9 5 5 5 5 6 6 6 6 9 9 7 7 14 14 2 2 4 4 6 6 3 3 6 6 6 6 19 19 14 14 2 2 2 2 8 8 10 10 13 13 26 26 16 16 4 4 14 14 9 9 13 13 12 12];
+
+G=digraph(s,t,weights)
+p=plot(G,'EdgeLabel',G.Edges.Weight)
+p.MarkerSize=15
+
+% Add weights to adjacency matrix
+A=G.adjacency;
+pre_n=size(s);
+n=pre_n(2);
+
+for i=1:n
+    A(s(i),t(i))=weights(i);
+end
+
+% A_normal is the nonsparse adjacency matrix suitable for maxplus
+% operations
+A_normal=full(A);
+A_normal(A==0)=-Inf

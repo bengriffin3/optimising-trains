@@ -1,0 +1,53 @@
+% eigenvalue, eigenvector using power of matrices
+function [eigenvalue,eigenvector] = maxeig(A)
+    [m,n] = size(A);
+    % only for square matrices
+    if m==n 
+        oldx = zeros(n,1); 
+        storx = zeros(n,1);
+        compx = zeros(n,1); 
+        iteration=2; 
+        ok=0;
+        while ok==0
+            newx = maxmult(A,oldx);
+        % store newx as the second column of storx
+            storx(1:n,iteration)=newx;
+            % from first column to the second last column
+            for k=1:(iteration-1) 
+                ok=1;
+                % for all rows
+                for i=1:n
+                    % last column of iteration minus all previous columns
+                    compx(i,k)=storx(i,iteration)-storx(i,iteration-k);
+                    % for the kth column, if the first element does not
+                    % equal to one of the other elements
+                    if compx(1,k)~=compx(i,k) 
+                        ok=0; 
+                        break 
+                    end
+                end
+            nu=compx(1,k); de=k; index=iteration-k;
+            if ok==1 
+                break 
+            end
+            end
+            iteration=iteration+1; oldx = newx;
+        end
+        eigenvalue=nu/de; 
+        eigenvector=storx(1:n,iteration-2);
+        for i=1:(iteration-index-2)
+            evec=maxmult(storx(1:n,iteration-i-2),i*eigenvalue);
+            for j=1:n
+                eigenvector(j,1)=max(eigenvector(j,1),evec(j,1));
+            end
+        end
+        temp=inf;
+        for i=1:n 
+            temp=min(temp,eigenvector(i,1)); 
+        end
+        for i=1:n 
+            eigenvector(i,1)=eigenvector(i,1)-temp; 
+        end
+    else
+        disp('Matrix must be square.') 
+    end

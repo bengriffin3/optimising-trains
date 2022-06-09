@@ -1,0 +1,47 @@
+function output =delay(A_normal,t_d)
+% *A_normal is the adjacency matrix; t_d is the initial delay amount on 
+%   critical circuit*
+
+% finding the eigenvalue and eigenvector of matrix
+[eigenvalue,eigenvector] = maxeig(A_normal);
+% size
+s=size(eigenvector,1);
+% T is the planned departure time, round to the nearest 5, want easy to
+% remember time tables
+% evalue=28, T=30 in my case
+T=round(eigenvalue/5)*5;
+
+% a delay happends with respect to the initial value x(0) on the critical
+% circuit (on any node of the critical circuit)
+f = critCircuit(A_normal);
+% find the node to add delays
+critical_node=f(1,1);
+% planned departure time
+d0=eigenvector;
+% actural departure time, x0
+delay_amount=zeros(s,1);
+delay_amount(critical_node)=t_d;
+x=eigenvector+delay_amount;
+
+% finding when the delay goes out of the system
+k=0;
+while k<=1000
+    k=k+1;
+    % kth planned departure time
+    d=k*T*ones(s,1)+d0;
+    % kth actural departure time
+    pre_x=maxmult(A_normal,x);
+    x=max(pre_x,d);
+    % check if delay vanishes
+    check=x-d;
+    % number of delayed trains, num
+    n_delayedtrains=find(check>0)
+    num=size(n_delayedtrains,1);
+    if num==0
+        output=k;
+        break
+    elseif k==1000
+        output='Delay never goes out of the system.';
+        break
+    end            
+end
